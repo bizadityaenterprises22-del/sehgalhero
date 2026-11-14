@@ -1,6 +1,6 @@
 {
-  "name": "Sehgal Hero App",
-  "short_name": "Sehgal Hero",
+  "name": "SEHGAL AUTORIDERS — HERO",
+  "short_name": "SEHGAL AUTORIDERS — HERO",
   "id": "/",
   "start_url": "/",
   "scope": "/",
@@ -8,7 +8,7 @@
   "orientation": "portrait",
   "background_color": "#15181c",
   "theme_color": "#15181c",
-  "description": "Sehgal Autoriders - Hero MotoCorp workshop operations: gate entry, estimates, holdup, parts and insurance renewals.",
+  "description": "SEHGAL AUTORIDERS — HERO Operations Hub: gate entry, estimates, holdup, parts and insurance renewals.",
   "categories": [
     "business",
     "productivity"

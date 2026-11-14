@@ -70,3 +70,14 @@
 # owner and age, CEO / Maruti admin login only (rows come from Supabase mar_truth_board through that login). Self-contained,
 # no data inside, no key beyond the publishable one that already ships in index.html. By NAME, as above.
 !maruti-truth.html
+# R170 (07-11-2026): the repo is private now, so a release file cannot be downloaded by staff; the two wrappers and their
+# size note are served from this site. No customer data. By NAME, as above.
+!app/download/
+!app/download/SehgalHero.apk
+!app/download/SehgalHero-Setup.msi
+!app/download/latest.json
+
+!install/
+!install/index.html
+!app/download/
+!app/download/*

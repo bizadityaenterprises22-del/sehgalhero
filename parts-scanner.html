@@ -99,6 +99,395 @@
 
   #toast { position: fixed; left: 50%; bottom: 88px; transform: translateX(-50%); background: var(--dark); color: #fff; padding: 10px 20px; border-radius: 20px; font-size: 15px; opacity: 0; transition: opacity .25s; pointer-events: none; z-index: 9; }
 </style>
+
+<style id="hero-r174-subpage-safearea">
+:root {
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+}
+html, body {
+  max-width: 100% !important;
+  overflow-x: clip !important;
+}
+header, .top, .hdr {
+  position: sticky !important;
+  top: 0 !important;
+  z-index: 40 !important;
+  padding-top: max(12px, calc(var(--safe-top, 0px) + 8px)) !important;
+}
+body, main, .wrap {
+  padding-bottom: max(32px, calc(var(--safe-bottom, 0px) + 24px)) !important;
+}
+</style>
+
+
+<style id="hero-r174-universal-ui-fix">
+/* ============================================================================
+   R174 (11-11-2026) — UNIVERSAL UI, SAFE-AREA, POPUP SCROLL & FULL-SCREEN CAMERA
+   Fixes:
+   1. UI01/UI04: Sticky top header on all viewports with safe-area-inset-top;
+      never loses sticky positioning on mobile; compact mode on scroll down.
+   2. UI02/UI03: Bottom safe-area clearance on all views, sheets, drawers and
+      fixed bottom bars; overflow-x: clip (not hidden) so body never becomes a
+      competing scroll container that breaks position: sticky.
+   3. UI05/UI12/UI13: Clean wrapping and truncation across 320px..1920px and
+      system font scaling.
+   4. UI06..UI11/UI15: Universal flex-column modal boxes + independently
+      scrollable modal bodies across all 22 popups/overlays; strict background
+      scroll lock with exact scrollY preservation and boundary overscroll lock.
+   5. CAM01: Compulsory 100vw x 100dvh full-screen camera viewfinder with live
+      preview, exposure compensation, tap/continuous autofocus, torch and flip.
+   ============================================================================ */
+:root {
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-left: env(safe-area-inset-left, 0px);
+  --safe-right: env(safe-area-inset-right, 0px);
+  --vvh: 100dvh;
+}
+html, body {
+  max-width: 100% !important;
+  overflow-x: clip !important;
+}
+/* UI01 & UI04: Keep .top sticky on every screen width and respect top safe area */
+.top {
+  position: sticky !important;
+  top: 0 !important;
+  z-index: 40 !important;
+  padding-top: max(10px, calc(var(--safe-top, 0px) + 8px)) !important;
+  padding-left: max(12px, calc(var(--safe-left, 0px) + 10px)) !important;
+  padding-right: max(12px, calc(var(--safe-right, 0px) + 10px)) !important;
+  transition: padding 0.15s ease;
+}
+/* Fix white-on-white ratiostrip label defect */
+.ratiostrip, .ratiostrip .rlab, .ratiostrip .rval {
+  color: var(--ink) !important;
+}
+@media (max-width: 720px) {
+  .top {
+    position: sticky !important;
+    top: 0 !important;
+    padding-top: max(8px, calc(var(--safe-top, 0px) + 6px)) !important;
+    padding-bottom: 8px !important;
+  }
+  /* When user scrolls down > 60px on phone, collapse secondary action rows so sticky header stays compact (~64px) */
+  body.hero-scrolled-down .top #top-actions,
+  body.hero-scrolled-down .top #top-asks {
+    display: none !important;
+  }
+}
+
+/* UI02 & UI04: Bottom safe-area clearance on all page containers & bottom bars */
+.wrap, #view-login .loginwrap {
+  padding-bottom: max(36px, calc(var(--safe-bottom, 0px) + 28px)) !important;
+  padding-left: max(14px, calc(var(--safe-left, 0px) + 12px));
+  padding-right: max(14px, calc(var(--safe-right, 0px) + 12px));
+}
+.ins3-pane, .ins3-listwrap, .ib-frame, .i5-list {
+  padding-bottom: max(76px, calc(var(--safe-bottom, 0px) + 64px)) !important;
+}
+#ins3-pile,
+#ins3-detailwrap.on,
+#hum-sheet .hum-sheet-inner,
+.ins3-fs,
+#rt-sheet,
+.i5-drawer .sheet,
+#r136-tov .tf {
+  padding-bottom: max(20px, calc(var(--safe-bottom, 0px) + 16px)) !important;
+}
+#avask-ov .ab {
+  padding-bottom: max(28px, calc(var(--safe-bottom, 0px) + 22px)) !important;
+  overscroll-behavior: contain !important;
+  -webkit-overflow-scrolling: touch !important;
+}
+/* Top safe-area clearance on full-screen fixed views/overlays */
+.ins4, .insf, #ins3-fs.on, #hero-photo-ov {
+  padding-top: max(14px, calc(var(--safe-top, 0px) + 10px)) !important;
+  padding-bottom: max(20px, calc(var(--safe-bottom, 0px) + 16px)) !important;
+}
+#avask-ov .ah, #r136-tov .th {
+  padding-top: max(12px, calc(var(--safe-top, 0px) + 10px)) !important;
+}
+
+/* UI06 & UI10: Lock background page & inner scroll containers when any popup is open */
+html.hero-modal-open,
+html.hero-modal-open body {
+  overflow: hidden !important;
+  overscroll-behavior: none !important;
+}
+html.hero-modal-open .ins3-listwrap,
+html.hero-modal-open .i5-list,
+html.hero-modal-open .ib-stage {
+  overflow: hidden !important;
+}
+
+/* UI07, UI08, UI09, UI15: Universal Popup / Modal Layout & Independent Scroll */
+.modal,
+.ravi-modal-overlay,
+#preview-modal,
+#chgpass-modal,
+#fp-modal,
+#ge-model-modal,
+#es-model-modal,
+#reg-modal,
+#regadm-modal,
+#modal-newtable,
+#modal-addcolumn,
+#hu-contact-modal,
+#go-sheet,
+#req-modal {
+  padding: max(12px, calc(var(--safe-top, 0px) + 8px)) 12px max(16px, calc(var(--safe-bottom, 0px) + 12px)) 12px !important;
+  box-sizing: border-box !important;
+  overscroll-behavior: contain !important;
+}
+
+/* Group A: Modals with .modal-head + .modal-body */
+.modal-box,
+.hu-contact-modal-inner,
+.hum-sheet-inner {
+  display: flex !important;
+  flex-direction: column !important;
+  width: min(100%, 600px) !important;
+  max-width: calc(100vw - 24px) !important;
+  max-height: calc(var(--vvh, 100dvh) - 32px - var(--safe-top, 0px) - var(--safe-bottom, 0px)) !important;
+  margin: 12px auto !important;
+  overflow: hidden !important;
+  box-sizing: border-box !important;
+}
+#hum-sheet .hum-sheet-inner {
+  margin: auto auto 0 auto !important;
+  max-width: 560px !important;
+}
+.modal-head {
+  flex: 0 0 auto !important;
+}
+.modal-body,
+#ravi-kpi-body,
+#preview-body,
+#hu-cm-body {
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  max-height: calc(var(--vvh, 100dvh) - 108px - var(--safe-top, 0px) - var(--safe-bottom, 0px)) !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  -webkit-overflow-scrolling: touch !important;
+  overscroll-behavior: contain !important;
+  padding-bottom: 24px !important;
+  box-sizing: border-box !important;
+}
+
+/* Group B: Modals where .box or .chgpass-box or direct child div holds content directly */
+.modal > .box,
+.chgpass-box,
+#ge-model-modal > div,
+#es-model-modal > div {
+  width: min(100%, 540px) !important;
+  max-width: calc(100vw - 24px) !important;
+  max-height: calc(var(--vvh, 100dvh) - 32px - var(--safe-top, 0px) - var(--safe-bottom, 0px)) !important;
+  margin: 12px auto !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  -webkit-overflow-scrolling: touch !important;
+  overscroll-behavior: contain !important;
+  padding-bottom: 24px !important;
+  box-sizing: border-box !important;
+}
+#ge-model-list,
+#es-model-list,
+#rt-list,
+#i5-dbody,
+#r136-tov .tb {
+  overflow-y: auto !important;
+  -webkit-overflow-scrolling: touch !important;
+  overscroll-behavior: contain !important;
+}
+
+/* CAM01: Compulsory Full-Screen Camera Modal (100vw x 100dvh) */
+#hero-fscam-ov {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100dvh;
+  z-index: 2147483600;
+  background: #000;
+  display: none;
+  flex-direction: column;
+  justify-content: space-between;
+  overflow: hidden;
+  touch-action: none;
+  user-select: none;
+}
+#hero-fscam-ov.on {
+  display: flex !important;
+}
+#hero-fscam-stage {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  background: #000;
+  overflow: hidden;
+}
+#hero-fscam-vid,
+#hero-fscam-preview {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  background: #000;
+}
+#hero-fscam-preview {
+  object-fit: contain;
+  display: none;
+}
+#hero-fscam-focus-ring {
+  position: absolute;
+  width: 68px;
+  height: 68px;
+  border: 2px solid #facc15;
+  border-radius: 50%;
+  transform: translate(-50%, -50%) scale(1.2);
+  pointer-events: none;
+  opacity: 0;
+  transition: transform 0.18s ease, opacity 0.25s ease;
+  box-shadow: 0 0 12px rgba(250, 204, 21, 0.55);
+}
+#hero-fscam-focus-ring.active {
+  transform: translate(-50%, -50%) scale(1);
+  opacity: 1;
+}
+#hero-fscam-top {
+  position: relative;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: max(14px, calc(var(--safe-top, 0px) + 10px)) 16px 12px 16px;
+  background: linear-gradient(180deg, rgba(0,0,0,0.78) 0%, rgba(0,0,0,0) 100%);
+  color: #fff;
+}
+#hero-fscam-title {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  text-shadow: 0 1px 4px rgba(0,0,0,0.8);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.hero-fscam-pill {
+  background: rgba(15, 23, 42, 0.72);
+  color: #fff;
+  border: 1px solid rgba(255,255,255,0.28);
+  border-radius: 999px;
+  padding: 7px 13px;
+  font-size: 12.5px;
+  font-weight: 700;
+  cursor: pointer;
+  backdrop-filter: blur(6px);
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+.hero-fscam-pill.active {
+  background: #facc15;
+  color: #0f172a;
+  border-color: #facc15;
+}
+#hero-fscam-mid {
+  position: relative;
+  z-index: 3;
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 0 20px 8px 20px;
+  pointer-events: none;
+}
+#hero-fscam-exp-wrap {
+  pointer-events: auto;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(15, 23, 42, 0.68);
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: 999px;
+  padding: 5px 14px;
+  color: #fff;
+  font-size: 11.5px;
+  font-weight: 700;
+  backdrop-filter: blur(6px);
+}
+#hero-fscam-exp {
+  width: 140px;
+  accent-color: #facc15;
+}
+#hero-fscam-status {
+  color: rgba(255,255,255,0.88);
+  font-size: 12px;
+  font-weight: 600;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.9);
+  background: rgba(0,0,0,0.45);
+  padding: 4px 12px;
+  border-radius: 999px;
+}
+#hero-fscam-bot {
+  position: relative;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  gap: 14px;
+  padding: 14px 20px max(24px, calc(var(--safe-bottom, 0px) + 18px)) 20px;
+  background: linear-gradient(0deg, rgba(0,0,0,0.84) 0%, rgba(0,0,0,0) 100%);
+}
+#hero-fscam-shutter {
+  width: 74px;
+  height: 74px;
+  border-radius: 50%;
+  border: 4px solid #fff;
+  background: rgba(255,255,255,0.22);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+}
+#hero-fscam-shutter::after {
+  content: '';
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: #fff;
+  transition: transform 0.12s ease, background 0.12s ease;
+}
+#hero-fscam-shutter:active::after {
+  transform: scale(0.88);
+  background: #facc15;
+}
+.hero-fscam-act {
+  background: #16a34a;
+  color: #fff;
+  border: none;
+  border-radius: 999px;
+  padding: 12px 24px;
+  font-size: 14px;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.4);
+}
+.hero-fscam-act.retake {
+  background: rgba(30, 41, 59, 0.88);
+  border: 1px solid rgba(255,255,255,0.35);
+}
+</style>
+
 </head>
 <body>
 <div id="app">
@@ -802,5 +1191,329 @@ $('logToggle').onclick = () => {
 // resume a session if one exists
 enter()
 </script>
+
+<!-- ================= R174 FULL-SCREEN CAMERA (CAM01) ================= -->
+<div id="hero-fscam-ov" role="dialog" aria-modal="true" aria-label="Full Screen Camera">
+  <div id="hero-fscam-stage" onclick="heroFsCamTapFocus(event)">
+    <video id="hero-fscam-vid" autoplay playsinline muted></video>
+    <img id="hero-fscam-preview" alt="Captured preview">
+    <div id="hero-fscam-focus-ring"></div>
+  </div>
+  <div id="hero-fscam-top">
+    <div id="hero-fscam-title">Camera</div>
+    <div style="display:flex;gap:8px;align-items:center">
+      <button type="button" id="hero-fscam-torch" class="hero-fscam-pill" onclick="heroFsCamToggleTorch()" style="display:none">🔦 Torch</button>
+      <button type="button" id="hero-fscam-flip" class="hero-fscam-pill" onclick="heroFsCamFlip()">🔄 Flip</button>
+      <button type="button" id="hero-fscam-close" class="hero-fscam-pill" onclick="heroFsCamClose()">✕ Close</button>
+    </div>
+  </div>
+  <div id="hero-fscam-mid">
+    <div id="hero-fscam-exp-wrap">
+      <span>☀️ Exposure</span>
+      <input id="hero-fscam-exp" type="range" min="-2" max="2" step="0.25" value="0" oninput="heroFsCamSetExposure(this.value)">
+      <span id="hero-fscam-exp-val">0.0</span>
+    </div>
+    <div id="hero-fscam-status">Tap screen to focus · Full-screen HD capture</div>
+  </div>
+  <div id="hero-fscam-bot">
+    <button type="button" id="hero-fscam-gallery" class="hero-fscam-pill" onclick="heroFsCamOpenGallery()">🖼️ Gallery</button>
+    <button type="button" id="hero-fscam-shutter" onclick="heroFsCamSnap()" aria-label="Capture Photo"></button>
+    <div id="hero-fscam-confirm-bar" style="display:none;gap:12px;align-items:center;width:100%;justify-content:center">
+      <button type="button" class="hero-fscam-act retake" onclick="heroFsCamRetake()">↺ Retake</button>
+      <button type="button" class="hero-fscam-act" onclick="heroFsCamUse()">✓ Use Photo</button>
+    </div>
+    <div id="hero-fscam-spacer" style="width:82px"></div>
+  </div>
+</div>
+<script>
+(function(){
+  let fsStream = null;
+  let fsTrack = null;
+  let fsFacing = 'environment';
+  let fsTorch = false;
+  let fsTargetInput = null;
+  let fsCapturedBlob = null;
+  let fsBypassOnce = false;
+
+  function stopStream(){
+    if(fsStream){
+      try{ fsStream.getTracks().forEach(function(t){ t.stop(); }); }catch(e){}
+      fsStream = null;
+      fsTrack = null;
+    }
+    fsTorch = false;
+  }
+
+  async function startStream(){
+    stopStream();
+    const vid = document.getElementById('hero-fscam-vid');
+    const prev = document.getElementById('hero-fscam-preview');
+    const st = document.getElementById('hero-fscam-status');
+    const torchBtn = document.getElementById('hero-fscam-torch');
+    const expWrap = document.getElementById('hero-fscam-exp-wrap');
+    const expIn = document.getElementById('hero-fscam-exp');
+    const expVal = document.getElementById('hero-fscam-exp-val');
+    if(prev) prev.style.display = 'none';
+    if(vid){ vid.style.display = 'block'; vid.style.filter = 'brightness(1)'; }
+    if(expIn) expIn.value = '0';
+    if(expVal) expVal.textContent = '0.0';
+
+    if(!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia){
+      if(st) st.textContent = 'Live camera stream unavailable — tap Gallery to pick photo';
+      return false;
+    }
+    try{
+      fsStream = await navigator.mediaDevices.getUserMedia({
+        video: {
+          facingMode: { ideal: fsFacing },
+          width: { ideal: 1920 },
+          height: { ideal: 1080 }
+        },
+        audio: false
+      });
+      if(vid){
+        vid.srcObject = fsStream;
+        await vid.play().catch(function(){});
+      }
+      const tracks = fsStream.getVideoTracks();
+      fsTrack = tracks && tracks.length ? tracks[0] : null;
+      if(fsTrack && typeof fsTrack.getCapabilities === 'function'){
+        const caps = fsTrack.getCapabilities() || {};
+        if(torchBtn) torchBtn.style.display = caps.torch ? 'inline-flex' : 'none';
+        if(caps.focusMode && caps.focusMode.indexOf('continuous') !== -1){
+          try{ await fsTrack.applyConstraints({advanced:[{focusMode:'continuous'}]}); }catch(e){}
+        }
+        if(caps.exposureCompensation && expIn){
+          expIn.min = caps.exposureCompensation.min ?? -2;
+          expIn.max = caps.exposureCompensation.max ?? 2;
+          expIn.step = caps.exposureCompensation.step || 0.25;
+        }
+      } else if(torchBtn){
+        torchBtn.style.display = 'none';
+      }
+      if(expWrap) expWrap.style.display = 'flex';
+      if(st) st.textContent = 'Tap screen to focus · Full-screen HD capture';
+      return true;
+    }catch(err){
+      if(st) st.textContent = 'Camera permission required — tap Gallery or allow camera access';
+      return false;
+    }
+  }
+
+  window.heroFsCamOpen = function(inputEl, titleText){
+    fsTargetInput = inputEl || null;
+    fsCapturedBlob = null;
+    const capAttr = inputEl ? (inputEl.getAttribute('capture') || 'environment') : 'environment';
+    fsFacing = (capAttr === 'user') ? 'user' : 'environment';
+    const ov = document.getElementById('hero-fscam-ov');
+    const tt = document.getElementById('hero-fscam-title');
+    const sh = document.getElementById('hero-fscam-shutter');
+    const gal = document.getElementById('hero-fscam-gallery');
+    const sp = document.getElementById('hero-fscam-spacer');
+    const cb = document.getElementById('hero-fscam-confirm-bar');
+    if(!ov) return;
+    if(tt) tt.textContent = titleText || 'Full-Screen Camera';
+    if(sh) sh.style.display = 'flex';
+    if(gal) gal.style.display = 'inline-flex';
+    if(sp) sp.style.display = 'block';
+    if(cb) cb.style.display = 'none';
+    ov.classList.add('on');
+    ov.style.display = 'flex';
+    if(typeof window.heroSyncModalLock === 'function') window.heroSyncModalLock();
+    startStream();
+  };
+
+  window.heroFsCamClose = function(){
+    stopStream();
+    const ov = document.getElementById('hero-fscam-ov');
+    if(ov){
+      ov.classList.remove('on');
+      ov.style.display = 'none';
+    }
+    if(typeof window.heroSyncModalLock === 'function') window.heroSyncModalLock();
+  };
+
+  window.heroFsCamFlip = function(){
+    fsFacing = (fsFacing === 'environment') ? 'user' : 'environment';
+    startStream();
+  };
+
+  window.heroFsCamToggleTorch = async function(){
+    if(!fsTrack) return;
+    fsTorch = !fsTorch;
+    const btn = document.getElementById('hero-fscam-torch');
+    try{
+      await fsTrack.applyConstraints({advanced:[{torch: fsTorch}]});
+      if(btn) btn.classList.toggle('active', fsTorch);
+    }catch(e){
+      fsTorch = false;
+      if(btn) btn.classList.remove('active');
+    }
+  };
+
+  window.heroFsCamSetExposure = async function(val){
+    const num = parseFloat(val) || 0;
+    const lbl = document.getElementById('hero-fscam-exp-val');
+    if(lbl) lbl.textContent = (num >= 0 ? '+' : '') + num.toFixed(1);
+    const vid = document.getElementById('hero-fscam-vid');
+    if(fsTrack && typeof fsTrack.getCapabilities === 'function'){
+      const caps = fsTrack.getCapabilities() || {};
+      if(caps.exposureCompensation){
+        try{
+          await fsTrack.applyConstraints({advanced:[{exposureCompensation: num}]});
+          return;
+        }catch(e){}
+      }
+    }
+    /* Software brightness fallback when hardware exposureCompensation isn't exposed */
+    if(vid){
+      const b = 1 + (num * 0.18);
+      vid.style.filter = 'brightness(' + b.toFixed(2) + ')';
+    }
+  };
+
+  window.heroFsCamTapFocus = async function(ev){
+    const stage = document.getElementById('hero-fscam-stage');
+    const ring = document.getElementById('hero-fscam-focus-ring');
+    if(!stage || !ring) return;
+    const rect = stage.getBoundingClientRect();
+    const x = ev.clientX - rect.left;
+    const y = ev.clientY - rect.top;
+    ring.style.left = x + 'px';
+    ring.style.top = y + 'px';
+    ring.classList.add('active');
+    setTimeout(function(){ ring.classList.remove('active'); }, 650);
+    if(fsTrack && typeof fsTrack.getCapabilities === 'function'){
+      const caps = fsTrack.getCapabilities() || {};
+      if(caps.focusMode){
+        try{
+          const nx = Math.max(0, Math.min(1, x / Math.max(1, rect.width)));
+          const ny = Math.max(0, Math.min(1, y / Math.max(1, rect.height)));
+          await fsTrack.applyConstraints({advanced:[{pointsOfInterest:[{x:nx, y:ny}], focusMode:'single-shot'}]});
+        }catch(e){}
+      }
+    }
+  };
+
+  window.heroFsCamSnap = function(){
+    const vid = document.getElementById('hero-fscam-vid');
+    const prev = document.getElementById('hero-fscam-preview');
+    const sh = document.getElementById('hero-fscam-shutter');
+    const gal = document.getElementById('hero-fscam-gallery');
+    const sp = document.getElementById('hero-fscam-spacer');
+    const cb = document.getElementById('hero-fscam-confirm-bar');
+    const st = document.getElementById('hero-fscam-status');
+    if(!vid) return;
+    const w = vid.videoWidth || 1280;
+    const h = vid.videoHeight || 720;
+    const cvs = document.createElement('canvas');
+    cvs.width = w;
+    cvs.height = h;
+    const ctx = cvs.getContext('2d');
+    const expVal = parseFloat((document.getElementById('hero-fscam-exp')||{}).value || '0') || 0;
+    if(expVal !== 0){
+      ctx.filter = 'brightness(' + (1 + expVal * 0.18).toFixed(2) + ')';
+    }
+    if(fsStream && vid.readyState >= 2){
+      ctx.drawImage(vid, 0, 0, w, h);
+    } else {
+      ctx.fillStyle = '#0f172a';
+      ctx.fillRect(0, 0, w, h);
+      ctx.fillStyle = '#fff';
+      ctx.font = 'bold 28px Inter, sans-serif';
+      ctx.fillText('Captured Frame ' + new Date().toLocaleTimeString(), 40, h/2);
+    }
+    cvs.toBlob(function(blob){
+      fsCapturedBlob = blob;
+      if(prev && blob){
+        prev.src = URL.createObjectURL(blob);
+        prev.style.display = 'block';
+        vid.style.display = 'none';
+      }
+      if(sh) sh.style.display = 'none';
+      if(gal) gal.style.display = 'none';
+      if(sp) sp.style.display = 'none';
+      if(cb) cb.style.display = 'flex';
+      if(st) st.textContent = 'Review capture — Use Photo or Retake';
+    }, 'image/jpeg', 0.92);
+  };
+
+  window.heroFsCamRetake = function(){
+    fsCapturedBlob = null;
+    const vid = document.getElementById('hero-fscam-vid');
+    const prev = document.getElementById('hero-fscam-preview');
+    const sh = document.getElementById('hero-fscam-shutter');
+    const gal = document.getElementById('hero-fscam-gallery');
+    const sp = document.getElementById('hero-fscam-spacer');
+    const cb = document.getElementById('hero-fscam-confirm-bar');
+    const st = document.getElementById('hero-fscam-status');
+    if(prev) prev.style.display = 'none';
+    if(vid) vid.style.display = 'block';
+    if(sh) sh.style.display = 'flex';
+    if(gal) gal.style.display = 'inline-flex';
+    if(sp) sp.style.display = 'block';
+    if(cb) cb.style.display = 'none';
+    if(st) st.textContent = 'Tap screen to focus · Full-screen HD capture';
+    if(!fsStream) startStream();
+  };
+
+  window.heroFsCamUse = function(){
+    if(!fsCapturedBlob || !fsTargetInput){
+      heroFsCamClose();
+      return;
+    }
+    try{
+      const file = new File([fsCapturedBlob], 'camera_' + Date.now() + '.jpg', {type:'image/jpeg'});
+      const dt = new DataTransfer();
+      dt.items.add(file);
+      fsTargetInput.files = dt.files;
+      fsTargetInput.dispatchEvent(new Event('change', {bubbles:true}));
+    }catch(e){}
+    heroFsCamClose();
+  };
+
+  window.heroFsCamOpenGallery = function(){
+    const inp = fsTargetInput;
+    heroFsCamClose();
+    if(inp){
+      fsBypassOnce = true;
+      const prevCap = inp.getAttribute('capture');
+      inp.removeAttribute('capture');
+      inp.click();
+      setTimeout(function(){
+        if(prevCap) inp.setAttribute('capture', prevCap);
+        fsBypassOnce = false;
+      }, 600);
+    }
+  };
+
+  /* Intercept clicks on <input type="file" capture="..."> so every camera action opens Full-Screen Camera (CAM01) */
+  document.addEventListener('click', function(ev){
+    if(fsBypassOnce) return;
+    let el = ev.target;
+    if(!el) return;
+    if(el.tagName === 'LABEL'){
+      const sub = el.querySelector('input[type="file"][capture]');
+      if(sub) el = sub;
+    }
+    if(el.tagName === 'INPUT' && el.type === 'file' && el.hasAttribute('capture')){
+      ev.preventDefault();
+      ev.stopPropagation();
+      let labelText = 'Full-Screen Camera';
+      if(el.id && el.id.indexOf('ge-photo-') === 0){
+        labelText = 'Gate Photo · ' + el.id.replace('ge-photo-','').toUpperCase();
+      } else if(el.id === 'r2-selfie'){
+        labelText = 'Selfie Capture';
+      } else if(el.id === 'ravi-doc-file'){
+        labelText = 'Document / Photo Scan';
+      } else if(el.getAttribute('onchange') && el.getAttribute('onchange').indexOf('geVinFromPhoto') !== -1){
+        labelText = 'RC / Frame VIN Scan';
+      }
+      window.heroFsCamOpen(el, labelText);
+    }
+  }, true);
+})();
+</script>
+
 </body>
 </html>

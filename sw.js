@@ -28,8 +28,8 @@
 
 /* Must match window.HERO_RELEASE / window.HERO_BUILD in index.html exactly.
    release.ps1 bumps both together and refuses to publish on a mismatch. */
-const HERO_RELEASE = 122;
-const HERO_BUILD = 'R169-2026.11.05.1';
+const HERO_RELEASE = 129;
+const HERO_BUILD = 'R179-2026.11.13.2';
 const SHELL_CACHE = 'hero-shell-' + HERO_BUILD;
 /* Throttle for the background shell refresh — see the fetch handler. */
 let LAST_SHELL_REFRESH = 0;
@@ -194,3 +194,4 @@ self.addEventListener('message', function (event) {
     if (event.source) event.source.postMessage({ heroBuild: HERO_BUILD });
   }
 });
+

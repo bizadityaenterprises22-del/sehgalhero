@@ -81,6 +81,27 @@ footer{text-align:center;color:var(--mut);font-size:12px;margin-top:34px;padding
  section.mod h2{font-size:18px}
 }
 </style>
+
+<style id="hero-r174-subpage-safearea">
+:root {
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+}
+html, body {
+  max-width: 100% !important;
+  overflow-x: clip !important;
+}
+header, .top, .hdr {
+  position: sticky !important;
+  top: 0 !important;
+  z-index: 40 !important;
+  padding-top: max(12px, calc(var(--safe-top, 0px) + 8px)) !important;
+}
+body, main, .wrap {
+  padding-bottom: max(32px, calc(var(--safe-bottom, 0px) + 24px)) !important;
+}
+</style>
+
 </head>
 <body>
 
@@ -141,13 +162,13 @@ footer{text-align:center;color:var(--mut);font-size:12px;margin-top:34px;padding
 
   <h3 class="sh"><span class="en">Steps</span><span class="mr">पायऱ्या</span></h3>
   <div class="en"><ol class="steps">
-    <li>Open <b class="k">sehgalautoriders.github.io</b> in Chrome.</li>
+    <li>Open <b class="k">app.sehgalautoriders.com</b> in Chrome.</li>
     <li>Menu ⋮ → <b class="k">Add to Home screen</b>. Do this once, on every phone that will use the app.</li>
     <li>Enter your employee number and password. The employee number is the one on the Sehgal roll — not a Hero MotoCorp SA code.</li>
     <li>Pick your workshop if you are asked. What you see afterwards depends on your role: an advisor sees his own jobs, a manager sees the floor, the CEO sees everything.</li>
   </ol></div>
   <div class="mr"><ol class="steps">
-    <li>Chrome मध्ये <b class="k">sehgalautoriders.github.io</b> उघडा.</li>
+    <li>Chrome मध्ये <b class="k">app.sehgalautoriders.com</b> उघडा.</li>
     <li>मेनू ⋮ → <b class="k">Add to Home screen</b>. प्रत्येक फोनवर हे एकदाच करायचे आहे.</li>
     <li>तुमचा एम्प्लॉई नंबर आणि पासवर्ड टाका. हा सेहगलचा एम्प्लॉई नंबर आहे — हिरोचा SA कोड नाही.</li>
     <li>विचारल्यास तुमचे वर्कशॉप निवडा. त्यानंतर काय दिसेल हे तुमच्या भूमिकेवर ठरते: अ‍ॅडव्हायझरला त्याची कामे, मॅनेजरला संपूर्ण फ्लोअर, CEO ला सर्व काही.</li>
